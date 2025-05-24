@@ -15,7 +15,7 @@ urlpatterns = [
     # 게시글 삭제      (DELETE)
     path('board/delete/<int:pk>/', post_detail, name='post-delete'),
 
-    # 댓글 관련
+    # 댓글 관련 urls.
     # 댓글 작성        (POST)
     path('board/comment/create/<int:post_id>/', create_comment, name='comment-create'),
     #댓글 목록 조회   (GET)
