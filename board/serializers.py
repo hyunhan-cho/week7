@@ -6,13 +6,13 @@ from .models import Post, Comment
 class PostListSerializer(serializers.ModelSerializer):  
     class Meta:
         model = Post
-        fields = ['title', 'body']  
+        fields = ['id','title', 'body']  
     
     def create(self, validated_data):
         return Post.objects.create(**validated_data)
     
     
-# 게시글 응답용 Serializer 
+# 게시글 응답용 Serializer ㅎㅎㅎㅎ
 class PostResponseSerializer(serializers.ModelSerializer):
     created_at = serializers.SerializerMethodField()  
 
@@ -21,7 +21,8 @@ class PostResponseSerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'body', 'created_at']
 
     def get_created_at(self, obj):
-        return timezone.localtime(obj.created_at).strftime('%Y-%m-%d')
+        return timezone.localtime(obj.created_at).strftime('%Y-%m-%d')  
+
 # 댓글 응답용 Serializer 
 class CommentResponseSerializer(serializers.ModelSerializer):
     created_at = serializers.SerializerMethodField()

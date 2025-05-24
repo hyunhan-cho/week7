@@ -15,22 +15,23 @@ from .serializers import (
 def post_list(request):
     if request.method == 'GET':
         posts = Post.objects.order_by('-created_at')
-        serializer = PostResponseSerializer(posts, many=True)  
-        return Response(serializer.data)
+        serializer = PostListSerializer(posts, many=True)  # 이 부분 수정정
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-    serializer = PostListSerializer(data=request.data)  
-    if serializer.is_valid():
-        post = serializer.save()
-        resp = PostResponseSerializer(post)  
-        return Response(resp.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'POST':
+        serializer = PostListSerializer(data=request.data)
+        if serializer.is_valid():
+            post = serializer.save()
+            resp = PostListSerializer(post)  # 이 부분 수정 ㅎㅎㅎ
+            return Response(resp.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
 
     if request.method == 'GET':
-        serializer = PostDetailSerializer(post) 
+        serializer = PostListSerializer(post, data=request.data)
         return Response(serializer.data)
 
     elif request.method == 'PUT':
@@ -40,9 +41,10 @@ def post_detail(request, pk):
             resp = PostDetailSerializer(post)  
             return Response(resp.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    post.delete()
-    return Response(status=status.HTTP_204_NO_CONTENT)
+    elif request.method == 'DELETE':
+        post.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    return Response({'detail': 'Method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['POST'])
 def create_comment(request, post_id):
@@ -59,4 +61,4 @@ def get_comments(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
     comments = post.comments.order_by('-created_at')
     serializer = CommentResponseSerializer(comments, many=True)  
-    return Response(serializer.data)
+    return Response(serializer.data, status=status.HTTP_200_OK)
