@@ -21,10 +21,9 @@ def post_list(request):
     elif request.method == 'POST':
         serializer = PostListSerializer(data=request.data)
         if serializer.is_valid():
-            post = serializer.save()
-            resp = PostListSerializer(post)  # 이 부분 수정 ㅎㅎㅎ
-            return Response(resp.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+         post = serializer.save()
+         resp = PostResponseSerializer(post) 
+        return Response(resp.data, status=status.HTTP_201_CREATED)
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def post_detail(request, pk):
